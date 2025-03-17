@@ -3,67 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Image</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            height: 100vh;
-            justify-content: center;
-        }
-        .circle {
-            width: 80px;
-            height: 80px;
-            background: lightgray;
-            border-radius: 50%;
-        }
-        h3 {
-            text-align: center;
-            font-weight: bold;
-        }
-        .flag {
-            display: flex;
-            width: 200px;
-            height: 300px;
-        }
-        .left, .right {
-            width: 50%;
-        }
-        .left {
-            display: flex;
-            flex-direction: column;
-        }
-        .top {
-            flex: 2;
-            background: blue;
-        }
-        .bottom {
-            flex: 1;
-            background: darkgreen;
-        }
-        .right {
-            background: brown;
-        }
-    </style>
+    <title>Bangladesh</title>
 </head>
-<body>
-    <div class="container">
-        <img src="Flag.png" alt="Circle" class="circle">
-        <h3>This is the flag of Bangladesh</h3>
-        <div class="flag">
-            <div class="left">
-                <div class="top"></div>
-                <div class="bottom"></div>
-            </div>
-            <div class="right"></div>
+<body style="margin: 0; padding: 0; box-sizing: border-box; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;">
+
+    <img src="Flag.png" alt="Circle" style="width: 80px; height: 80px; background: lightgray; border-radius: 50%;">
+
+    <h3 style="text-align: center; font-weight: bold;">This is the flag of Bangladesh</h3>
+
+    <div style="display: flex; width: 200px; height: 300px;">
+
+        
+        <div style="width: 50%; display: flex; flex-direction: column;">
+            <div style="flex: 2; background: blue;"></div>
+            <div style="flex: 1; background: darkgreen;"></div>
         </div>
+
+       
+        <div style="width: 50%; background: brown;"></div>
+
     </div>
+
 </body>
 </html>
