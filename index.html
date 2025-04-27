@@ -4,171 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bangladesh</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body style="margin: 0; padding: 0; box-sizing: border-box; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;">
-
-    <img src="Flag.png" alt="Circle" style="width: 80px; height: 80px; background: lightgray; border-radius: 50%;">
-
-    <h3 style="text-align: center; font-weight: bold;">This is the flag of Bangladesh</h3>
-
-    <div style="display: flex; width: 500px; height: 800px;">
-
-        <div style="width: 50%; display: flex; flex-direction: column;">
-            <div id="colorDiv" style="flex: 2; background: blue;">
-                <form
-                    id="myForm" onsubmit="return validateForm()">
-                    <label for="fname">Full name:</label> <br>
+<body>
+    <img src="Flag.png" alt="Circle" class="flag-image">
+    <h3>This is the flag of Bangladesh</h3>
+    <div class="main-container">
+        <div class="left-column">
+            <div id="colorDiv" class="color-section">
+                <form id="myForm">
+                    <label for="fname">Full name:</label><br>
                     <input type="text" id="fname" name="fname" placeholder="Full Name"><br>
-
+                    <span class="warning" id="fname-warning"></span><br>
                     <p>Please select gender</p>
                     <input type="radio" id="male" name="gender" value="Gender">
                     <label for="male">Male</label>
                     <input type="radio" id="female" name="gender" value="Gender">
                     <label for="female">Female</label><br>
-
+                    <span class="warning" id="gender-warning"></span><br>
                     <label for="mail">Email:</label><br>
-                    <input type="text" id="mail" name="mail" placeholder="Enter email address "><br><br>
+                    <input type="text" id="mail" name="mail" placeholder="Enter email address"><br>
+                    <span class="warning" id="mail-warning"></span><br>
                     <label for="pass">Password</label><br>
-                    <input type="text" id="pass" name="pass" placeholder="Enter Password"><br><br>
+                    <input type="password" id="pass" name="pass" placeholder="Enter Password"><br>
+                    <span class="warning" id="pass-warning"></span><br>
                     <label for="cpass">Confirm Password</label><br>
-                    <input type="text" id="cpass" name="cpass" placeholder="Enter Password Again"><br><br>
+                    <input type="password" id="cpass" name="cpass" placeholder="Enter Password Again"><br>
+                    <span class="warning" id="cpass-warning"></span><br>
                     <label for="dob">Date of birth</label><br>
-                    <input type="date" id="birthday" name="birthday">  
+                    <input type="date" id="birthday" name="birthday"><br>
+                    <span class="warning" id="birthday-warning"></span>
                 </form>
-                <br>   
-                
                 <select id="country" name="country" class="form-control">
                     <option value="Bangladesh">Bangladesh</option>
-                    <option value="Afghanistan">Afghanistan</option>
-                    
+                    <option value="Pakistan">Pakistan</option>
+                    <option value="United States">United States</option>
+                    <option value="Singapore">Singapore</option>
+                    <option value="Uganda">Uganda</option>
+                    <option value="Qatar">Qatar</option>
                 </select>
-
-               
                 <form>
-                    <br>
                     <label for="opinion">Opinion</label><br>
                 </form>
-                <textarea name="comment" form="opinion">Enter your opinion</textarea>
-                <br>
+                <textarea name="comment" class="opinion-textarea">Enter your opinion</textarea><br>
                 <input type="checkbox" id="terms" name="terms">
                 <label for="terms">
-                    <a href="tac.html" target="_blank" style="color: black; text-decoration: underline;">Terms and Conditions</a>
-                </label>
-                <br>
+                    <a href="tac.html" target="_blank" class="terms-link">Terms and Conditions</a>
+                </label><br>
+                <span class="warning" id="terms-warning"></span><br>
                 <p>Choose your favorite color</p>
-                <input type="radio" name="color" value="red" id="red">
-                <label for="red">Red</label>
-
-                <input type="radio" name="color" value="green" id="green">
-                <label for="green">Green</label>
-
-                <input type="radio" name="color" value="blue" id="blue">
-                <label for="blue">Blue</label>
-
+                <input type="radio" name="color" value="yellow" id="yellow">
+                <label for="yellow">Yellow</label>
+                <input type="radio" name="color" value="skyblue" id="skyblue">
+                <label for="skyblue">Skyblue</label>
+                <input type="radio" name="color" value="purple" id="purple">
+                <label for="purple">Purple</label>
                 <form>
-                    <input type="submit" name="submit" value="submit" onclick="validateForm()">
-                    
+                    <input type="submit" name="submit" value="submit" id="submitButton">
                 </form>
-
-                <script>
-                    const radios = document.querySelectorAll('input[name="color"]');
-                    const colorDiv = document.getElementById('colorDiv');
-                
-                    radios.forEach(radio => {
-                        radio.addEventListener('change', () => {
-                            colorDiv.style.backgroundColor = radio.value;
-                        });
-                    });
-                
-                    function validateForm() {
-                        const name = document.getElementById("fname").value;
-                        const email = document.getElementById("mail").value;
-                        const password = document.getElementById("pass").value;
-                        const confirmPassword = document.getElementById("cpass").value;
-                        const terms = document.getElementById("terms").checked;
-                        const genderSelected = document.querySelector('input[name="gender"]:checked');
-                        const dob = document.getElementById("birthday").value;
-                        const successMessage = document.createElement('p');
-                        successMessage.style.color = 'green';
-                        successMessage.textContent = 'Submitted successfully!';
-                
-                        let valid = true;
-                
-                        // Name validation
-                        const nameRegex = /^[a-zA-Z.-]+$/;
-                        if (!nameRegex.test(name)) {
-                            alert("Name can only contain letters, '.', and '-'.");
-                            valid = false;
-                        }
-                
-                        // Gender validation
-                        if (!genderSelected) {
-                            alert("Please select a gender.");
-                            valid = false;
-                        }
-                
-                        // Email validation
-                        const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail)\.com$/;
-                        if (!emailRegex.test(email)) {
-                            alert("Email must be a valid Gmail, Yahoo, or Hotmail address.");
-                            valid = false;
-                        }
-                
-                        // Password validation
-                        if (password !== confirmPassword) {
-                            alert("Passwords do not match.");
-                            valid = false;
-                        }
-                
-                        // Date of birth validation
-                        if (!dob) {
-                            alert("Please enter your date of birth.");
-                            valid = false;
-                        } else {
-                            const dobDate = new Date(dob);
-                            const today = new Date();
-                            const age = today.getFullYear() - dobDate.getFullYear();
-                            const monthDiff = today.getMonth() - dobDate.getMonth();
-                            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-                                age--;
-                            }
-                            if (age < 18) {
-                                alert("You must be at least 18 years old.");
-                                valid = false;
-                            }
-                        }
-                
-                        // Terms and conditions validation
-                        if (!terms) {
-                            alert("You must accept the terms and conditions.");
-                            valid = false;
-                        }
-                
-                        // If valid, show success message
-                        if (valid) {
-                            document.body.appendChild(successMessage);
-                            alert("Successful");
-                            valid = false;
-                        }
-                
-                        return true; // Prevent form submission for demonstration purposes
-                    }
-                </script>
             </div>
-            <div style="flex: 1; background: darkgreen;"></div>
+            <div class="bottom-section"></div>
         </div>
-
-        <div style="width: 50%; background: brown;"></div>
-
+        <div class="right-column"></div>
     </div>
-
-    <script>
-        function changeBackgroundColor() {
-            const color = document.getElementById("color").value;
-            document.querySelector("div").style.backgroundColor = color;
-        }
-
-    </script>
-    
-       
-    
+    <script src="script.js"></script>
+</body>
+</html>

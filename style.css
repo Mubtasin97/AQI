@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flag-image {
+  width: 80px;
+  height: 80px;
+  background: lightgray;
+  border-radius: 50%;
+}
+
+h3 {
+  text-align: center;
+  font-weight: bold;
+}
+
+.main-container {
+  display: flex;
+  width: 500px;
+  height: 800px;
+}
+
+.left-column {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.color-section {
+  flex: 2;
+  background: blue;
+}
+
+.bottom-section {
+  flex: 1;
+  background: darkgreen;
+}
+
+.right-column {
+  width: 50%;
+  background: brown;
+}
+
+.terms-link {
+  color: black;
+  text-decoration: underline;
+}
+
+.opinion-textarea {
+  /* Add any specific textarea styles if needed */
+}
+
+.form-control {
+  /* Add any specific select styles if needed */
+}
+
+.warning {
+  color: red;
+  font-size: 12px;
+}
