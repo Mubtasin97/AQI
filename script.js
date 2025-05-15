@@ -1,10 +1,6 @@
-const colorPicker = document.getElementById('colorPicker');
-const colorDiv = document.getElementById('colorDiv');
-
-// Color picker functionality
-colorPicker.addEventListener('change', () => {
-    colorDiv.style.backgroundColor = colorPicker.value;
-});
+const loginButton = document.getElementById('loginButton');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
 
 // Validation functions
 function validateName(name) {
@@ -25,7 +21,7 @@ function validatePassword(pass, cpass) {
 function validateDOB(dob) {
     if (!dob) return false;
     const dobDate = new Date(dob);
-    const today = new Date();
+    const today = new Date('2025-05-15');
     let age = today.getFullYear() - dobDate.getFullYear();
     const monthDiff = today.getMonth() - dobDate.getMonth();
     const dayDiff = today.getDate() - dobDate.getDate();
@@ -111,7 +107,7 @@ document.getElementById('country').addEventListener('blur', () => {
     }
 });
 
-// Form submission handler
+// Form submission handler (client-side validation)
 function validateForm(event) {
     event.preventDefault();
     const name = document.getElementById('fname').value;
@@ -183,13 +179,54 @@ function validateForm(event) {
     if (errors.length > 0) {
         alert('Please fix the following errors:\n- ' + errors.join('\n- '));
     } else {
-        const successMessage = document.createElement('p');
-        successMessage.style.color = 'green';
-        successMessage.textContent = 'Submitted successfully!';
-        document.body.appendChild(successMessage);
-        alert('Successful');
+        const formData = new FormData(document.getElementById('myForm'));
+        fetch('process.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.debug ? 'Registration successful, ' + data.debug : 'Registration successful!');
+                location.reload();
+            } else {
+                alert(data.error === "User already exists" ? "User already exists" : data.error);
+                location.reload();
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error);
+            location.reload();
+        });
     }
 }
+
+// Handle login
+loginButton.addEventListener('click', () => {
+    const formData = new FormData();
+    formData.append('action', 'login');
+    formData.append('loginEmail', loginEmail.value);
+    formData.append('loginPassword', loginPassword.value);
+
+    fetch('process.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            localStorage.setItem('userName', data.name);
+            // Store email in localStorage for dashboard color retrieval
+            localStorage.setItem('userEmail', loginEmail.value);
+            window.location.href = 'dashboard.php';
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+});
 
 // Attach event listeners
 document.getElementById('myForm').addEventListener('submit', validateForm);
