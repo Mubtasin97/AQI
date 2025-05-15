@@ -18,56 +18,126 @@
                     <input type="text" id="fname" name="fname" placeholder="Full Name"><br>
                     <span class="warning" id="fname-warning"></span><br>
                     <p>Please select gender</p>
-                    <input type="radio" id="male" name="gender" value="Gender">
-                    <label for="male">Male</label>
-                    <input type="radio" id="female" name="gender" value="Gender">
-                    <label for="female">Female</label><br>
+                    <div class="gender-group">
+                        <div class="gender-option">
+                            <label for="male">Male</label>
+                            <input type="radio" id="male" name="gender" value="Gender">
+                        </div>
+                        <div class="gender-option">
+                            <label for="female">Female</label>
+                            <input type="radio" id="female" name="gender" value="Gender">
+                        </div>
+                    </div>
                     <span class="warning" id="gender-warning"></span><br>
                     <label for="mail">Email:</label><br>
                     <input type="text" id="mail" name="mail" placeholder="Enter email address"><br>
                     <span class="warning" id="mail-warning"></span><br>
                     <label for="pass">Password</label><br>
-                    <input type="password" id="pass" name="pass" placeholder="Enter Password"><br>
+                    <input type="password" id="pass" name="pass" placeholder="Min 8 chars, 1 letter, 1 number, 1 symbol"><br>
                     <span class="warning" id="pass-warning"></span><br>
                     <label for="cpass">Confirm Password</label><br>
-                    <input type="password" id="cpass" name="cpass" placeholder="Enter Password Again"><br>
+                    <input type="password" id="cpass" name="cpass" placeholder="Re-enter password"><br>
                     <span class="warning" id="cpass-warning"></span><br>
                     <label for="dob">Date of birth</label><br>
                     <input type="date" id="birthday" name="birthday"><br>
-                    <span class="warning" id="birthday-warning"></span>
-                </form>
-                <select id="country" name="country">
-                    <option value="Bangladesh">Bangladesh</option>
-                    <option value="Pakistan">Pakistan</option>
-                    <option value="Afghanistan">Afghanistan</option>
-                    <option value="United States">United States</option>
-                    <option value="Singapore">Singapore</option>
-                    <option value="Uganda">Uganda</option>
-                    <option value="Qatar">Qatar</option>
-                </select>
-                <form>
-                    <label for="opinion">Opinion</label><br>
-                </form>
-                <textarea name="comment">Enter your opinion</textarea><br>
-                <input type="checkbox" id="terms" name="terms">
-                <label for="terms">
-                    <a href="tac.html" target="_blank" class="terms-link">Terms and Conditions</a>
-                </label><br>
-                <span class="warning" id="terms-warning"></span><br>
-                <p>Choose your favorite color</p>
-                <input type="radio" name="color" value="yellow" id="yellow">
-                <label for="yellow">Yellow</label>
-                <input type="radio" name="color" value="skyblue" id="skyblue">
-                <label for="skyblue">Skyblue</label>
-                <input type="radio" name="color" value="purple" id="purple">
-                <label for="purple">Purple</label>
-                <form>
-                    <input type="submit" name="submit" value="submit" id="submitButton">
+                    <span class="warning" id="birthday-warning"></span><br>
+                    <label for="country">Country</label><br>
+                    <select id="country" name="country">
+                        <option value="">Select a country</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="Afghanistan">Afghanistan</option>
+                        <option value="United States">United States</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="Uganda">Uganda</option>
+                        <option value="Qatar">Qatar</option>
+                    </select><br>
+                    <span class="warning" id="country-warning"></span><br>
+                    <label for="comment">Opinion</label><br>
+                    <textarea id="comment" name="comment" placeholder="Enter your opinion"></textarea><br>
+                    <label for="colorPicker">Pick a color</label><br>
+                    <input type="color" id="colorPicker"><br>
+                    <input type="checkbox" id="terms" name="terms">
+                    <label for="terms">
+                        <a href="tac.html" target="_blank" class="terms-link">Terms and Conditions</a>
+                    </label><br>
+                    <span class="warning" id="terms-warning"></span><br>
+                    <input type="submit" name="submit" value="Submit" id="submitButton">
                 </form>
             </div>
-            <div class="bottom-section"></div>
+            <div class="bottom-section">
+                <h2>Login</h2>
+                <input type="text" id="loginEmail" placeholder="Enter email address"><br>
+                <span class="warning" id="loginEmail-warning"></span><br>
+                <input type="password" id="loginPassword" placeholder="Enter Password"><br>
+                <span class="warning" id="loginPassword-warning"></span><br>
+                <button id="loginButton">Login</button>
+            </div>
         </div>
-        <div class="right-column"></div>
+        <div class="right-column">
+            <h2>AQI of cities</h2>
+            <table class="aqi-table">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>AQI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bangladesh</td>
+                        <td>Dhaka</td>
+                        <td>145</td>
+                    </tr>
+                    <tr>
+                        <td>Pakistan</td>
+                        <td>Karachi</td>
+                        <td>92</td>
+                    </tr>
+                    <tr>
+                        <td>Afghanistan</td>
+                        <td>Kabul</td>
+                        <td>178</td>
+                    </tr>
+                    <tr>
+                        <td>United States</td>
+                        <td>New York</td>
+                        <td>65</td>
+                    </tr>
+                    <tr>
+                        <td>Singapore</td>
+                        <td>Singapore City</td>
+                        <td>38</td>
+                    </tr>
+                    <tr>
+                        <td>Uganda</td>
+                        <td>Kampala</td>
+                        <td>120</td>
+                    </tr>
+                    <tr>
+                        <td>Qatar</td>
+                        <td>Doha</td>
+                        <td>85</td>
+                    </tr>
+                    <tr>
+                        <td>Bangladesh</td>
+                        <td>Chittagong</td>
+                        <td>130</td>
+                    </tr>
+                    <tr>
+                        <td>Pakistan</td>
+                        <td>Lahore</td>
+                        <td>150</td>
+                    </tr>
+                    <tr>
+                        <td>United States</td>
+                        <td>Los Angeles</td>
+                        <td>72</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

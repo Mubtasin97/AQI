@@ -1,11 +1,9 @@
-const radios = document.querySelectorAll('input[name="color"]');
+const colorPicker = document.getElementById('colorPicker');
 const colorDiv = document.getElementById('colorDiv');
 
-// Color radio button functionality
-radios.forEach(radio => {
-    radio.addEventListener('change', () => {
-        colorDiv.style.backgroundColor = radio.value;
-    });
+// Color picker functionality
+colorPicker.addEventListener('change', () => {
+    colorDiv.style.backgroundColor = colorPicker.value;
 });
 
 // Validation functions
@@ -20,7 +18,8 @@ function validateEmail(email) {
 }
 
 function validatePassword(pass, cpass) {
-    return pass === cpass && pass !== '';
+    const passRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+    return passRegex.test(pass) && pass === cpass;
 }
 
 function validateDOB(dob) {
@@ -34,6 +33,10 @@ function validateDOB(dob) {
         age--;
     }
     return age >= 18;
+}
+
+function validateCountry(country) {
+    return country !== '';
 }
 
 // Blur event handlers for real-time validation
@@ -66,6 +69,8 @@ document.getElementById('pass').addEventListener('blur', () => {
     const warning = document.getElementById('pass-warning');
     if (!pass) {
         warning.textContent = '* Password is required';
+    } else if (!/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/.test(pass)) {
+        warning.textContent = '* Password must be 8+ chars, 1 letter, 1 number, 1 symbol';
     } else {
         warning.textContent = '';
     }
@@ -77,7 +82,7 @@ document.getElementById('cpass').addEventListener('blur', () => {
     const warning = document.getElementById('cpass-warning');
     if (!cpass) {
         warning.textContent = '* Confirm Password is required';
-    } else if (!validatePassword(pass, cpass)) {
+    } else if (pass !== cpass) {
         warning.textContent = '* Passwords do not match';
     } else {
         warning.textContent = '';
@@ -96,19 +101,29 @@ document.getElementById('birthday').addEventListener('blur', () => {
     }
 });
 
+document.getElementById('country').addEventListener('blur', () => {
+    const country = document.getElementById('country').value;
+    const warning = document.getElementById('country-warning');
+    if (!validateCountry(country)) {
+        warning.textContent = '* Country is required';
+    } else {
+        warning.textContent = '';
+    }
+});
+
 // Form submission handler
 function validateForm(event) {
-    event.preventDefault(); // Prevent form submission due to sandbox restrictions
+    event.preventDefault();
     const name = document.getElementById('fname').value;
     const email = document.getElementById('mail').value;
     const pass = document.getElementById('pass').value;
     const cpass = document.getElementById('cpass').value;
     const dob = document.getElementById('birthday').value;
+    const country = document.getElementById('country').value;
     const terms = document.getElementById('terms').checked;
     const genderSelected = document.querySelector('input[name="gender"]:checked');
     const errors = [];
 
-    // Validate and clear warnings for valid fields
     if (name && validateName(name)) {
         document.getElementById('fname-warning').textContent = '';
     } else {
@@ -130,14 +145,14 @@ function validateForm(event) {
         errors.push('Invalid email');
     }
 
-    if (pass) {
+    if (pass && /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/.test(pass)) {
         document.getElementById('pass-warning').textContent = '';
     } else {
-        document.getElementById('pass-warning').textContent = '* Password is required';
-        errors.push('Password is required');
+        document.getElementById('pass-warning').textContent = pass ? '* Password must be 8+ chars, 1 letter, 1 number, 1 symbol' : '* Password is required';
+        errors.push('Invalid password');
     }
 
-    if (cpass && validatePassword(pass, cpass)) {
+    if (cpass && pass === cpass) {
         document.getElementById('cpass-warning').textContent = '';
     } else {
         document.getElementById('cpass-warning').textContent = cpass ? '* Passwords do not match' : '* Confirm Password is required';
@@ -151,6 +166,13 @@ function validateForm(event) {
         errors.push('Invalid date of birth');
     }
 
+    if (validateCountry(country)) {
+        document.getElementById('country-warning').textContent = '';
+    } else {
+        document.getElementById('country-warning').textContent = '* Country is required';
+        errors.push('Country not selected');
+    }
+
     if (terms) {
         document.getElementById('terms-warning').textContent = '';
     } else {
@@ -158,7 +180,6 @@ function validateForm(event) {
         errors.push('Terms not accepted');
     }
 
-    // Handle submission
     if (errors.length > 0) {
         alert('Please fix the following errors:\n- ' + errors.join('\n- '));
     } else {
@@ -173,4 +194,3 @@ function validateForm(event) {
 // Attach event listeners
 document.getElementById('myForm').addEventListener('submit', validateForm);
 document.getElementById('submitButton').addEventListener('click', validateForm);
-
