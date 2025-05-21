@@ -22,6 +22,7 @@ if ($conn->connect_error) {
 
 // Get user's email from session
 $email = $_SESSION['email'];
+$name = $_SESSION['name'];
 
 // Fetch the user's selected color
 $stmt = $conn->prepare("SELECT Color FROM users WHERE Email = ?");
@@ -42,7 +43,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>AQI Dashboard</title>
     <style>
         body {
             margin: 0;
@@ -51,14 +52,57 @@ $conn->close();
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
             background-color: <?php echo htmlspecialchars($userColor); ?>;
             font-family: Arial, sans-serif;
         }
-        h1 {
+        .header {
+            width: 100%;
+            background-color: #4A90E2;
+            color: white;
             text-align: center;
+            padding: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background-color: #FF4D4D;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .logout-btn:hover {
+            background-color: #D43F3F;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .dashboard-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-message {
+            font-size: 20px;
             color: #333;
-            margin-top: 20px;
+            margin: 10px 0;
         }
         .aqi-button {
             background-color: #4A90E2;
@@ -69,35 +113,25 @@ $conn->close();
             font-size: 24px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 20px;
         }
         .aqi-button:hover {
             background-color: #357ABD;
         }
-        .logout-button {
-            background-color: #FF4D4D;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background-color 0.3s;
-        }
-        .logout-button:hover {
-            background-color: #D93636;
-        }
     </style>
 </head>
 <body>
-    <h1>Welcome, <span id="userName"></span>!</h1>
-    <button class="aqi-button" onclick="window.location.href='request.php'">Show AQI</button>
-    <button class="logout-button" onclick="logout()">Logout</button>
+    <div class="header">
+        Welcome to the AQI app
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="dashboard-container">
+        <img src="default.png" alt="Default Image" class="dashboard-image">
+        <div class="welcome-message">Welcome, <?php echo htmlspecialchars($name); ?>!</div>
+        <button class="aqi-button" onclick="window.location.href='request.php'">Show AQI</button>
+    </div>
 
     <script>
-        // Display user name from localStorage
-        const userName = localStorage.getItem('userName') || 'User';
-        document.getElementById('userName').textContent = userName;
-
         // Logout function
         function logout() {
             fetch('logout.php', {

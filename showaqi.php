@@ -20,13 +20,29 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Get user's email and name from session
+$email = $_SESSION['email'];
+$name = $_SESSION['name'];
+
+// Fetch the user's selected color (read-only info table)
+$stmt = $conn->prepare("SELECT Color FROM users WHERE Email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$userColor = "#F5F6F5"; // Default color if not found
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $userColor = $row['Color'] ?: "#F5F6F5";
+}
+$stmt->close();
+
 // Get selected city IDs
 $cityIds = isset($_POST['cities']) && is_array($_POST['cities']) ? $_POST['cities'] : [];
 if (count($cityIds) !== 10) {
     die("Please select exactly 10 cities.");
 }
 
-// Fetch data for selected cities
+// Fetch data for selected cities (read-only)
 $placeholders = implode(',', array_fill(0, count($cityIds), '?'));
 $stmt = $conn->prepare("SELECT ID, Country, City, AQI FROM info WHERE ID IN ($placeholders)");
 $stmt->bind_param(str_repeat('i', count($cityIds)), ...$cityIds);
@@ -38,6 +54,7 @@ if ($result->num_rows > 0) {
         $selectedCities[] = $row;
     }
 }
+// Note: info table is static with 20 cities and should not be modified
 $stmt->close();
 $conn->close();
 ?>
@@ -58,7 +75,15 @@ $conn->close();
             align-items: center;
             justify-content: center;
             font-family: Arial, sans-serif;
-            background-color: #F5F6F5;
+            background-color: <?php echo htmlspecialchars($userColor); ?>;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+            position: absolute;
+            top: 0;
         }
         h1 {
             text-align: center;
@@ -89,6 +114,10 @@ $conn->close();
     </style>
 </head>
 <body>
+    <div class="header">
+        <span>Welcome, <?php echo htmlspecialchars($name); ?>!</span>
+        <button onclick="logout()" style="margin-left: 10px;">Logout</button>
+    </div>
     <h1>AQI of Selected Cities</h1>
     <table class="aqi-table">
         <thead>
@@ -110,5 +139,23 @@ $conn->close();
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <script>
+        function logout() {
+            fetch('logout.php', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.removeItem('userName');
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => {
+                alert('Error during logout: ' + error);
+            });
+        }
+    </script>
 </body>
 </html>

@@ -8,6 +8,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_
     exit;
 }
 
+$name = $_SESSION['name'];
+
 // Database connection
 $servername = "localhost";
 $username = "root";
@@ -20,7 +22,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch cities from the info table
+// Fetch cities from the info table (read-only, no updates allowed)
 $result = $conn->query("SELECT ID, City FROM info");
 $cities = [];
 if ($result->num_rows > 0) {
@@ -28,6 +30,7 @@ if ($result->num_rows > 0) {
         $cities[] = $row;
     }
 }
+// Note: info table is static with 20 cities and should not be modified
 $conn->close();
 ?>
 
@@ -48,6 +51,14 @@ $conn->close();
             justify-content: center;
             font-family: Arial, sans-serif;
             background-color: #F5F6F5;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+            position: absolute;
+            top: 0;
         }
         h1 {
             text-align: center;
@@ -96,6 +107,10 @@ $conn->close();
     </style>
 </head>
 <body>
+    <div class="header">
+        <span>Welcome, <?php echo htmlspecialchars($name); ?>!</span>
+        <button onclick="logout()" style="margin-left: 10px;">Logout</button>
+    </div>
     <h1>Select 10 Cities</h1>
     <form id="cityForm" action="showaqi.php" method="POST">
         <div class="city-list">
@@ -132,6 +147,22 @@ $conn->close();
                     checkSelection();
                 }
             }
+        }
+
+        function logout() {
+            fetch('logout.php', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.removeItem('userName');
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => {
+                alert('Error during logout: ' + error);
+            });
         }
     </script>
 </body>

@@ -7,10 +7,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Fallback logging to a file
-$logFile = 'C:/xampp/htdocs/aqi_log.txt';
-file_put_contents($logFile, "Log started at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-
 // Database connection
 $servername = "localhost";
 $username = "root";
@@ -21,14 +17,14 @@ $conn = new mysqli($servername, $username, $password);
 
 // Explicitly select the database
 if (!$conn->select_db($dbname)) {
-    file_put_contents($logFile, "Failed to select database: " . $conn->error . "\n", FILE_APPEND);
-    die(json_encode(["error" => "Failed to select database: " . $conn->error]));
+    echo json_encode(["error" => "Failed to select database: " . $conn->error]);
+    exit;
 }
 
 // Check connection
 if ($conn->connect_error) {
-    file_put_contents($logFile, "Connection failed: " . $conn->connect_error . "\n", FILE_APPEND);
-    die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
+    echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
+    exit;
 }
 
 // Ensure auto-commit is enabled
@@ -47,15 +43,12 @@ $sql = "CREATE TABLE IF NOT EXISTS users (
     Color VARCHAR(32)
 )";
 if (!$conn->query($sql)) {
-    file_put_contents($logFile, "Table creation failed: " . $conn->error . "\n", FILE_APPEND);
-    die(json_encode(["error" => "Table creation failed: " . $conn->error]));
+    echo json_encode(["error" => "Table creation failed: " . $conn->error]);
+    exit;
 }
-file_put_contents($logFile, "Table creation successful or table already exists\n", FILE_APPEND);
 
-// Handle registration
+// Handle registration form submission (show summary)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'register') {
-    file_put_contents($logFile, "Received POST data: " . print_r($_POST, true) . "\n", FILE_APPEND);
-
     $name = trim($_POST['fname'] ?? '');
     $gender = isset($_POST['gender']) ? trim($_POST['gender']) : '';
     $email = trim($_POST['mail'] ?? '');
@@ -64,6 +57,139 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $country = trim($_POST['country'] ?? '');
     $opinion = trim($_POST['comment'] ?? '');
     $color = trim($_POST['colorPicker'] ?? '');
+
+    // Store data in session for summary
+    $_SESSION['registration_data'] = [
+        'name' => $name,
+        'gender' => $gender,
+        'email' => $email,
+        'password' => $password,
+        'dob' => $dob,
+        'country' => $country,
+        'opinion' => $opinion,
+        'color' => $color
+    ];
+
+    // Display summary page
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registration Summary</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background-color: #F5F6F5;
+            }
+            .summary-container {
+                max-width: 600px;
+                width: 100%;
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+            .summary-item {
+                margin: 10px 0;
+            }
+            .summary-item label {
+                font-weight: bold;
+            }
+            .buttons {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 20px;
+            }
+            button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .confirm-btn {
+                background-color: #4A90E2;
+                color: white;
+            }
+            .goback-btn {
+                background-color: #FF4D4D;
+                color: white;
+            }
+            .hidden-password {
+                display: inline-block;
+                width: 100px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="summary-container">
+            <h2>Registration Summary</h2>
+            <div class="summary-item">
+                <label>Name:</label> <?php echo htmlspecialchars($name); ?>
+            </div>
+            <div class="summary-item">
+                <label>Gender:</label> <?php echo htmlspecialchars($gender); ?>
+            </div>
+            <div class="summary-item">
+                <label>Email:</label> <?php echo htmlspecialchars($email); ?>
+            </div>
+            <div class="summary-item">
+                <label>Password:</label>
+                <span id="passwordField" class="hidden-password">********</span>
+                <input type="checkbox" id="showPassword">
+                <label for="showPassword">Show Password</label>
+            </div>
+            <div class="summary-item">
+                <label>Date of Birth:</label> <?php echo htmlspecialchars($dob); ?>
+            </div>
+            <div class="summary-item">
+                <label>Country:</label> <?php echo htmlspecialchars($country); ?>
+            </div>
+            <div class="summary-item">
+                <label>Opinion:</label> <?php echo htmlspecialchars($opinion); ?>
+            </div>
+            <div class="summary-item">
+                <label>Color:</label> <?php echo htmlspecialchars($color); ?>
+            </div>
+            <div class="buttons">
+                <button class="confirm-btn">Confirm</button>
+                <button class="goback-btn">Go Back</button>
+            </div>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// Handle confirmation of registration
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'confirm_registration') {
+    if (!isset($_SESSION['registration_data'])) {
+        echo json_encode(["error" => "No registration data found"]);
+        exit;
+    }
+
+    $data = $_SESSION['registration_data'];
+    $name = $data['name'];
+    $gender = $data['gender'];
+    $email = $data['email'];
+    $password = $data['password'];
+    $dob = $data['dob'];
+    $country = $data['country'];
+    $opinion = $data['opinion'];
+    $color = $data['color'];
 
     // Server-side validation
     $errors = [];
@@ -74,36 +200,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     if (empty($dob)) $errors[] = "Date of birth is required";
     if (empty($country)) $errors[] = "Country is required";
 
-    // Email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format";
     }
 
-    // DOB not in future
     $today = new DateTime('2025-05-15');
     $dobDate = new DateTime($dob);
     if ($dobDate > $today) {
         $errors[] = "Date of birth cannot be in the future";
     }
 
-    // Gender validation
     if (!in_array($gender, ["Male", "Female"])) {
         $errors[] = "Invalid gender";
     }
 
-    // Country validation
     $validCountries = ["Bangladesh", "Pakistan", "Afghanistan", "United States", "Singapore", "Uganda", "Qatar"];
     if (!in_array($country, $validCountries)) {
         $errors[] = "Invalid country";
     }
 
-    // Color length
     if (strlen($color) > 32) {
         $errors[] = "Color value too long";
     }
 
     if (!empty($errors)) {
-        file_put_contents($logFile, "Validation errors: " . implode("; ", $errors) . "\n", FILE_APPEND);
         echo json_encode(["error" => implode("; ", $errors)]);
         exit;
     }
@@ -112,7 +232,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $stmt = $conn->prepare("SELECT ID FROM users WHERE Name = ? AND DOB = ?");
     $stmt->bind_param("ss", $name, $dob);
     if (!$stmt->execute()) {
-        file_put_contents($logFile, "Check duplicate query failed: " . $stmt->error . "\n", FILE_APPEND);
         echo json_encode(["error" => "Failed to check duplicates: " . $stmt->error]);
         $stmt->close();
         exit;
@@ -129,28 +248,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $stmt = $conn->prepare("INSERT INTO users (Name, Gender, Email, Password, DOB, Country, Opinion, Color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssss", $name, $gender, $email, $password, $dob, $country, $opinion, $color);
 
-    // Log the query for debugging
-    $queryLog = "INSERT INTO users (Name, Gender, Email, Password, DOB, Country, Opinion, Color) VALUES ('$name', '$gender', '$email', '$password', '$dob', '$country', '$opinion', '$color')";
-    file_put_contents($logFile, "Executing query: " . $queryLog . "\n", FILE_APPEND);
-
     if ($stmt->execute()) {
-        // Check affected rows
         $affectedRows = $stmt->affected_rows;
-        file_put_contents($logFile, "Affected rows: $affectedRows\n", FILE_APPEND);
-
         if ($affectedRows > 0) {
-            // Get the last inserted ID
             $lastId = $conn->insert_id;
-            file_put_contents($logFile, "Last inserted ID: $lastId\n", FILE_APPEND);
-
-            // Verify data
             $verifyStmt = $conn->prepare("SELECT * FROM users WHERE ID = ?");
             $verifyStmt->bind_param("i", $lastId);
             $verifyStmt->execute();
             $verifyResult = $verifyStmt->get_result();
             $insertedData = $verifyResult->fetch_assoc();
-            file_put_contents($logFile, "Inserted data: " . print_r($insertedData, true) . "\n", FILE_APPEND);
-
             if ($insertedData) {
                 echo json_encode(["success" => true, "debug" => "Affected rows: $affectedRows, Last ID: $lastId"]);
             } else {
@@ -164,11 +270,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         if ($conn->errno == 1062) {
             echo json_encode(["error" => "User already exists"]);
         } else {
-            file_put_contents($logFile, "Insert failed: " . $stmt->error . "\n", FILE_APPEND);
             echo json_encode(["error" => "Failed to register: " . $stmt->error]);
         }
     }
     $stmt->close();
+    // Clear session data
+    unset($_SESSION['registration_data']);
+    exit;
 }
 
 // Handle login
@@ -196,6 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             // Set session variables
             $_SESSION['loggedin'] = true;
             $_SESSION['email'] = $email;
+            $_SESSION['name'] = $row['Name'];
             echo json_encode(["success" => true, "name" => $row['Name']]);
         } else {
             echo json_encode(["error" => "Invalid email or password"]);
@@ -204,7 +313,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         echo json_encode(["error" => "Invalid email or password"]);
     }
     $stmt->close();
+    exit;
 }
 
+// Handle empty requests
+echo json_encode(["error" => "Invalid request"]);
 $conn->close();
 ?>
