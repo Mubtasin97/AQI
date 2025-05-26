@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
 
-    // Validation functions
     function validateName(name) {
         const nameRegex = /^[a-zA-Z.-]+$/;
         return nameRegex.test(name);
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return country !== '';
     }
 
-    // Blur event handlers for real-time validation
     document.getElementById('fname').addEventListener('blur', () => {
         const name = document.getElementById('fname').value;
         const warning = document.getElementById('fname-warning');
@@ -108,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Show Password toggle (for registration form)
     function togglePassword() {
         const passInput = document.getElementById('pass');
         const cpassInput = document.getElementById('cpass');
@@ -122,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // For summary page
         const passwordField = document.getElementById('passwordField');
         const showPassword = document.getElementById('showPassword');
         if (passwordField && showPassword) {
@@ -133,8 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
-    // Confirm Registration handler
     function confirmRegistration() {
         fetch('process.php', {
             method: 'POST',
@@ -156,12 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Go Back handler
     function goBack() {
         window.location.href = 'index.html';
     }
 
-    // Form submission handler (client-side validation)
     function validateForm(event) {
         event.preventDefault();
         const name = document.getElementById('fname').value;
@@ -235,7 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const form = document.getElementById('myForm');
             console.log('Form object:', form);
-            // Submit form data via fetch
+            
+
+
             const formData = new FormData(form);
             fetch('process.php', {
                 method: 'POST',
@@ -243,21 +237,20 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => {
                 if (response.ok) {
-                    return response.text(); // Get the HTML summary page
+                    return response.text(); 
                 } else {
                     throw new Error('Registration failed');
                 }
             })
             .then(html => {
-                document.documentElement.innerHTML = html; // Replace page with summary
-                // Reattach event listeners for summary page
+                document.documentElement.innerHTML = html; 
                 const confirmBtn = document.querySelector('.confirm-btn');
                 const gobackBtn = document.querySelector('.goback-btn');
                 const showPasswordCheckbox = document.getElementById('showPassword');
                 if (confirmBtn) confirmBtn.addEventListener('click', confirmRegistration);
                 if (gobackBtn) gobackBtn.addEventListener('click', goBack);
                 if (showPasswordCheckbox) {
-                    showPasswordCheckbox.dataset.password = formData.get('pass'); // Store password for summary page
+                    showPasswordCheckbox.dataset.password = formData.get('pass'); 
                     showPasswordCheckbox.addEventListener('change', togglePassword);
                 }
             })
@@ -267,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle login
     loginButton.addEventListener('click', () => {
         const formData = new FormData();
         formData.append('action', 'login');
@@ -292,11 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Attach event listeners
     document.getElementById('myForm').addEventListener('submit', validateForm);
     document.getElementById('submitButton').addEventListener('click', validateForm);
 
-    // Attach togglePassword to the show password checkbox if it exists
     const showPasswordCheckbox = document.getElementById('showPassword');
     if (showPasswordCheckbox) {
         showPasswordCheckbox.addEventListener('change', togglePassword);

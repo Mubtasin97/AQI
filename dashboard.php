@@ -1,14 +1,11 @@
 <?php
-// Start session to check login status
 session_start();
 
-// Check if user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: index.html");
     exit;
 }
 
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -20,16 +17,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get user's email from session
 $email = $_SESSION['email'];
 $name = $_SESSION['name'];
 
-// Fetch the user's selected color
 $stmt = $conn->prepare("SELECT Color FROM users WHERE Email = ?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
-$userColor = "#ffffff"; // Default color if not found
+$userColor = "#ffffff"; 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $userColor = $row['Color'] ?: "#ffffff";
@@ -132,7 +127,6 @@ $conn->close();
     </div>
 
     <script>
-        // Logout function
         function logout() {
             fetch('logout.php', {
                 method: 'POST'

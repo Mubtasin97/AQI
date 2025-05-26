@@ -1,8 +1,7 @@
 <?php
-// Start session to check access
+
 session_start();
 
-// Check if user is logged in and coming from dashboard.php
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'dashboard.php') === false) {
     header("Location: index.html");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_
 
 $name = $_SESSION['name'];
 
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -21,8 +19,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-// Fetch cities from the info table (read-only, no updates allowed)
 $result = $conn->query("SELECT ID, City FROM info");
 $cities = [];
 if ($result->num_rows > 0) {
@@ -30,7 +26,7 @@ if ($result->num_rows > 0) {
         $cities[] = $row;
     }
 }
-// Note: info table is static with 20 cities and should not be modified
+
 $conn->close();
 ?>
 

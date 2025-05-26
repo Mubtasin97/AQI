@@ -1,13 +1,9 @@
 <?php
-// Start session
 session_start();
-
-// Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -15,22 +11,18 @@ $dbname = "aqi";
 
 $conn = new mysqli($servername, $username, $password);
 
-// Explicitly select the database
 if (!$conn->select_db($dbname)) {
     echo json_encode(["error" => "Failed to select database: " . $conn->error]);
     exit;
 }
 
-// Check connection
 if ($conn->connect_error) {
     echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
     exit;
 }
 
-// Ensure auto-commit is enabled
 $conn->autocommit(true);
 
-// Create table if it doesn't exist
 $sql = "CREATE TABLE IF NOT EXISTS users (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(32),
@@ -47,7 +39,6 @@ if (!$conn->query($sql)) {
     exit;
 }
 
-// Handle registration form submission (show summary)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'register') {
     $name = trim($_POST['fname'] ?? '');
     $gender = isset($_POST['gender']) ? trim($_POST['gender']) : '';
@@ -58,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $opinion = trim($_POST['comment'] ?? '');
     $color = trim($_POST['colorPicker'] ?? '');
 
-    // Store data in session for summary
+    
     $_SESSION['registration_data'] = [
         'name' => $name,
         'gender' => $gender,
@@ -70,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         'color' => $color
     ];
 
-    // Display summary page
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -174,7 +164,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     exit;
 }
 
-// Handle confirmation of registration
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'confirm_registration') {
     if (!isset($_SESSION['registration_data'])) {
         echo json_encode(["error" => "No registration data found"]);
@@ -191,7 +180,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $opinion = $data['opinion'];
     $color = $data['color'];
 
-    // Server-side validation
     $errors = [];
 
     if (empty($name)) $errors[] = "Name is required";
@@ -228,7 +216,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         exit;
     }
 
-    // Check for duplicate Name + DOB
     $stmt = $conn->prepare("SELECT ID FROM users WHERE Name = ? AND DOB = ?");
     $stmt->bind_param("ss", $name, $dob);
     if (!$stmt->execute()) {
@@ -244,7 +231,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
     $stmt->close();
 
-    // Insert data
     $stmt = $conn->prepare("INSERT INTO users (Name, Gender, Email, Password, DOB, Country, Opinion, Color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssss", $name, $gender, $email, $password, $dob, $country, $opinion, $color);
 
@@ -274,17 +260,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         }
     }
     $stmt->close();
-    // Clear session data
     unset($_SESSION['registration_data']);
     exit;
 }
 
-// Handle login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
     $email = trim($_POST['loginEmail']);
     $password = trim($_POST['loginPassword']);
-
-    // Server-side validation for login
     $errors = [];
     if (empty($email)) $errors[] = "Email is required";
     if (empty($password)) $errors[] = "Password is required";
@@ -301,7 +283,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['Password'])) {
-            // Set session variables
             $_SESSION['loggedin'] = true;
             $_SESSION['email'] = $email;
             $_SESSION['name'] = $row['Name'];
@@ -316,7 +297,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     exit;
 }
 
-// Handle empty requests
 echo json_encode(["error" => "Invalid request"]);
 $conn->close();
 ?>
